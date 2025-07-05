@@ -529,6 +529,136 @@ Returns all materials for a given project.
 ]
 ```
 
+### Create Material
+**POST** `/projects/{project}/materials`
+
+Creates a new material for a project owned by the authenticated user.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Request Body:**
+```json
+{
+    "name": "string|required|max:255",
+    "description": "string|nullable",
+    "amount": "string|nullable",
+    "est_cost": "integer|nullable",
+    "actual_cost": "integer|nullable",
+    "source": "string|nullable|max:255",
+    "acquired": "boolean|default:false",
+    "share": "boolean|default:false"
+}
+```
+
+**Response (201):**
+```json
+{
+    "message": "Material created successfully",
+    "data": {
+        "id": 1,
+        "project_id": 1,
+        "name": "Cotton Fabric",
+        "description": "Main fabric for dress",
+        "amount": "2 yards",
+        "est_cost": 1200,
+        "actual_cost": null,
+        "source": "Local Fabric Store",
+        "acquired": false,
+        "share": false,
+        "created_at": "2025-07-04T20:00:00.000000Z",
+        "updated_at": "2025-07-04T20:00:00.000000Z",
+        "notes": []
+    }
+}
+```
+
+### Get Material
+**GET** `/materials/{material}`
+
+Returns a specific material belonging to a project owned by the authenticated user.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Response (200):**
+```json
+{
+    "data": {
+        "id": 1,
+        "project_id": 1,
+        "name": "Cotton Fabric",
+        "description": "Main fabric for dress",
+        "amount": "2 yards",
+        "est_cost": 1200,
+        "actual_cost": 1300,
+        "source": "Local Fabric Store",
+        "acquired": true,
+        "share": false,
+        "created_at": "2025-07-04T20:00:00.000000Z",
+        "updated_at": "2025-07-04T20:00:00.000000Z",
+        "notes": [
+            {
+                "id": 1,
+                "content": "Buy extra for mistakes",
+                "created_at": "2025-07-04T20:00:00.000000Z",
+                "updated_at": "2025-07-04T20:00:00.000000Z"
+            }
+        ]
+    }
+}
+```
+
+### Update Material
+**PUT** `/materials/{material}`
+
+Updates a specific material belonging to a project owned by the authenticated user.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Request Body:**
+```json
+{
+    "name": "string|required|max:255",
+    "description": "string|nullable",
+    "amount": "string|nullable",
+    "est_cost": "integer|nullable",
+    "actual_cost": "integer|nullable",
+    "source": "string|nullable|max:255",
+    "acquired": "boolean",
+    "share": "boolean"
+}
+```
+
+**Response (200):**
+```json
+{
+    "message": "Material updated successfully",
+    "data": {
+        "id": 1,
+        "project_id": 1,
+        "name": "Updated Cotton Fabric",
+        "description": "Updated description",
+        "amount": "3 yards",
+        "est_cost": 1500,
+        "actual_cost": 1400,
+        "source": "Online Store",
+        "acquired": true,
+        "share": true,
+        "created_at": "2025-07-04T20:00:00.000000Z",
+        "updated_at": "2025-07-04T20:05:00.000000Z",
+        "notes": []
+    }
+}
+```
+
+### Delete Material
+**DELETE** `/materials/{material}`
+
+Deletes a specific material belonging to a project owned by the authenticated user.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Response (204):** No content
+
 ---
 
 ## Notes Endpoints
@@ -684,6 +814,28 @@ Notes are polymorphic and can be attached to projects, tasks, or materials. The 
 - `share` (boolean) - Whether task is shareable
 - `due_date` (datetime, nullable) - Task due date
 - `completion_date` (datetime, nullable) - Task completion date
+- `created_at` (datetime)
+- `updated_at` (datetime)
+
+### Material
+- `id` (integer) - Primary key
+- `project_id` (integer) - Foreign key to projects table
+- `name` (string) - Material name
+- `description` (text, nullable) - Material description
+- `amount` (string, nullable) - Quantity/amount of material
+- `est_cost` (integer, nullable) - Estimated cost in cents
+- `actual_cost` (integer, nullable) - Actual cost in cents
+- `source` (string, nullable) - Where material was purchased
+- `acquired` (boolean) - Whether material has been acquired
+- `share` (boolean) - Whether material is shareable
+- `created_at` (datetime)
+- `updated_at` (datetime)
+
+### Note
+- `id` (integer) - Primary key
+- `content` (text) - Note content
+- `noteable_type` (string) - Polymorphic relationship type (Project, Task, or Material)
+- `noteable_id` (integer) - Polymorphic relationship ID
 - `created_at` (datetime)
 - `updated_at` (datetime)
 

@@ -88,7 +88,7 @@
   - Description: Represents a note made onto another model. Projects, Tasks, and Materials can have many notes.
   - Fields:
     - id (string, unique identifier)
-    - content (string, required, unique)
+    - content (string, required)
     - created_at (datetime)
 
 

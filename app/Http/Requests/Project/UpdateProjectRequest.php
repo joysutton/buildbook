@@ -27,8 +27,7 @@ class UpdateProjectRequest extends FormRequest
                 'sometimes',
                 'required',
                 'string',
-                'max:255',
-                Rule::unique('projects', 'name')->ignore($this->route('project')->id)
+                'max:255'
             ],
             'series' => ['nullable', 'string', 'max:255'],
             'version' => ['nullable', 'string', 'max:255'],
@@ -40,7 +39,7 @@ class UpdateProjectRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.unique' => 'A project with this name already exists.',
+            // Custom messages can be added here if needed
         ];
     }
 }

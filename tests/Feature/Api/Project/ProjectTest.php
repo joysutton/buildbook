@@ -153,7 +153,7 @@ describe('Project API', function () {
             ->assertJsonValidationErrors(['name']);
     });
 
-    it('prevents duplicate project names', function () {
+    it('allows duplicate project names', function () {
         $user = User::factory()->create();
         Sanctum::actingAs($user);
         
@@ -163,8 +163,11 @@ describe('Project API', function () {
             'name' => 'Existing Project',
         ]);
 
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['name']);
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('projects', [
+            'name' => 'Existing Project',
+            'user_id' => $user->id
+        ]);
     });
 
     it('returns project with associated tasks, materials, and notes', function () {
