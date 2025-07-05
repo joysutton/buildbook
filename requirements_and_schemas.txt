@@ -1,0 +1,138 @@
+# Project Requirements and Schemas
+
+## 1. Project Overview
+- This is a project to manage sewing projects that are intended for entering on competitoions. 
+    This application will allow users to create new projects, add information and media related to them, 
+    create tasks associated with that project and track their completion. This application will also
+    allow the user to share a webpage with the build process formatted in an attractive manner and generate
+    a PDF version of that page for submission to competition judges. Thhis project will be in the TALL stack.
+
+## 2. Core Features
+- List and describe the main features the project should have.
+  User authentication
+  User profile editing
+  Project CRUD
+  Task CRUD
+  Material CRUD
+  Media uploads and association with models
+  TDD using Pest
+  Sharable webpage for project build history
+  PDF generation from rendered web page
+
+## 3. Functional Requirements
+- Detail the specific functionalities required for each feature.
+  Users can log in and edit their profile with solid authentication
+  Users can Create, View, Edit and Delete projects
+  Users can Create, View, Edit and Delete tasks which are tied to projects
+  Users can assign deadlines to tasks and change them
+  Users can add a list of materials to a project and update these materials as they go
+  Users can view a webpage representing a project that is publicly available
+  Users can select which tasks and materials should show on the page
+  Users can download a PDF created from this webpage
+
+## 4. Non-Functional Requirements
+  UI simple and intuitive using TALL stack
+  Frontend components should adhere to common 508 accessability standards
+  Using Laravel's form requests, all data request payloads should be validated
+  Spatie Media Library
+  All solutions should be implemented taking full advantage of Laravel's ORM and clean practices
+
+## 5. Data Schemas
+- Define the data models/entities used in the project.
+
+- Entity: User
+  - Description: Represents a registered user.
+  - Fields:
+    - id (string, unique identifier)
+    - username (string, required, unique)
+    - password (string, required, hashed)
+    - email (string, required, unique)
+    - created_at (datetime)
+    - handle (string)
+    - bio (longtext)
+
+- Entity: Project
+  - Description: Represents a project. Users can have many projects.
+  - Fields:
+    - id (string, unique identifier)
+    - name (string, required, unique)
+    - Series (string)
+    - Version (string)
+    - created_at (datetime)
+    - description (longtext)
+    - share (boolean)
+
+- Entity: Task
+  - Description: Represents a task. Projects can have many tasks.
+  - Fields:
+    - id (string, unique identifier)
+    - title (string, required, unique)
+    - created_at (datetime)
+    - description (longtext)
+    - share (boolean)
+    - due_date (datetime)
+    - completion_date (datetime)
+
+- Entity: Material
+  - Description: Represents a material used in a project. Projects can have many materials.
+  - Fields:
+    - id (string, unique identifier)
+    - name (string, required, unique)
+    - created_at (datetime)
+    - description (longtext)
+    - share (boolean)
+    - amount (string)
+    - est_cost (integer)
+    - actual_cost (integer)
+    - source (string)
+    - acquired (boolean)
+
+- Entity: Note
+  - Description: Represents a note made onto another model. Projects, Tasks, and Materials can have many notes.
+  - Fields:
+    - id (string, unique identifier)
+    - content (string, required, unique)
+    - created_at (datetime)
+
+
+## 6. Task Guidance for Agent
+  All image uploads and management should be handled using Spatie Media Library
+  PDF generation from an html template using Spatie's Browsershot 
+  No validation of data in controllers, use Laravel's form requests
+  We are building this TDD, any new work should have a test case created before starting on creating the code
+  We are building this API first, the entire backend will be built before building web pages. We will test the api routes via Pest
+  All new models should also have a factory and seeder so we can properly test and seed data
+  For the frontend, we build using compoent based archetecture. All major sections should be contained in their own component.
+  As much as possible, use Tailwind for styling frontend components
+  This project was created via Herd and is being developed on a windows machine using powershell
+
+## 7. Implementation Status
+
+### ✅ Completed (Backend API)
+- User authentication (login, register, profile management)
+- Project CRUD with API endpoints and tests
+- Task CRUD with API endpoints and tests  
+- Material CRUD with API endpoints and tests
+- Notes polymorphic relationships with API endpoints and tests
+- All models have factories and seeders
+- TDD implementation with Pest tests
+- API documentation updated and current
+- Form request validation for all endpoints
+- Laravel Sanctum authentication
+
+### 🔄 In Progress / Next Steps
+- Frontend implementation using TALL stack
+- Component-based architecture with Tailwind CSS
+- 508 accessibility compliance
+- Media uploads via Spatie Media Library (will be implemented during frontend development)
+- PDF generation via Spatie Browsershot (requires frontend views first)
+
+### 📋 Open Questions / Clarifications Needed
+- Media upload permissions and file type restrictions
+- PDF template design and customization options
+- Public sharing URL structure and security
+- Competition submission format requirements
+
+---
+
+(Use this file as a living document. Update as requirements and schemas evolve.) 

@@ -1,0 +1,109 @@
+<?php
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
+use Livewire\Volt\Component;
+
+new class extends Component {
+    public string $username = '';
+    public string $email = '';
+    public ?string $handle = '';
+    public ?string $bio = '';
+
+    /**
+     * Mount the component.
+     */
+    public function mount(): void
+    {
+        $user = Auth::user();
+        $this->username = $user->username;
+        $this->email = $user->email;
+        $this->handle = $user->handle;
+        $this->bio = $user->bio;
+    }
+
+    /**
+     * Update the profile information via API.
+     */
+    public function updateProfileInformation(): void
+    {
+        $response = Http::withToken(request()->bearerToken())
+            ->patch(url('/api/profile'), [
+                'username' => $this->username,
+                'email' => $this->email,
+                'handle' => $this->handle,
+                'bio' => $this->bio,
+            ]);
+
+        if ($response->successful()) {
+            $this->dispatch('profile-updated', username: $this->username);
+        } else {
+            $errors = $response->json('errors', []);
+            foreach ($errors as $field => $messages) {
+                $this->addError($field, $messages[0]);
+            }
+        }
+    }
+
+    /**
+     * Send an email verification notification to the current user.
+     */
+    public function resendVerificationNotification(): void
+    {
+        $user = Auth::user();
+
+        if ($user->hasVerifiedEmail()) {
+            $this->redirectIntended(default: route('dashboard', absolute: false));
+            return;
+        }
+
+        $user->sendEmailVerificationNotification();
+        Session::flash('status', 'verification-link-sent');
+    }
+}; ?>
+
+<section class="w-full">
+    @include('partials.settings-heading')
+
+    <x-settings.layout :heading="__('Profile')" :subheading="__('Update your profile information')">
+        <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
+            <flux:input wire:model="username" :label="__('Username')" type="text" required autofocus autocomplete="username" />
+            <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
+            <flux:input wire:model="handle" :label="__('Handle')" type="text" autocomplete="nickname" />
+            <flux:textarea wire:model="bio" :label="__('Bio')" placeholder="Tell us about yourself..." />
+
+            <div>
+                @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail &&! auth()->user()->hasVerifiedEmail())
+                    <div>
+                        <flux:text class="mt-4">
+                            {{ __('Your email address is unverified.') }}
+
+                            <flux:link class="text-sm cursor-pointer" wire:click.prevent="resendVerificationNotification">
+                                {{ __('Click here to re-send the verification email.') }}
+                            </flux:link>
+                        </flux:text>
+
+                        @if (session('status') === 'verification-link-sent')
+                            <flux:text class="mt-2 font-medium !dark:text-green-400 !text-green-600">
+                                {{ __('A new verification link has been sent to your email address.') }}
+                            </flux:text>
+                        @endif
+                    </div>
+                @endif
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex items-center justify-end">
+                    <flux:button variant="primary" type="submit" class="w-full">{{ __('Save') }}</flux:button>
+                </div>
+
+                <x-action-message class="me-3" on="profile-updated">
+                    {{ __('Saved.') }}
+                </x-action-message>
+            </div>
+        </form>
+
+        <livewire:settings.delete-user-form />
+    </x-settings.layout>
+</section>
