@@ -5,7 +5,7 @@
     This application will allow users to create new projects, add information and media related to them, 
     create tasks associated with that project and track their completion. This application will also
     allow the user to share a webpage with the build process formatted in an attractive manner and generate
-    a PDF version of that page for submission to competition judges. Thhis project will be in the TALL stack.
+    a PDF version of that page for submission to competition judges. This project will be in the TALL stack.
 
 ## 2. Core Features
 - List and describe the main features the project should have.
@@ -33,9 +33,6 @@
 ## 4. Non-Functional Requirements
   UI simple and intuitive using TALL stack
   Frontend components should adhere to common 508 accessability standards
-  Using Laravel's form requests, all data request payloads should be validated
-  Spatie Media Library
-  All solutions should be implemented taking full advantage of Laravel's ORM and clean practices
 
 ## 5. Data Schemas
 - Define the data models/entities used in the project.
@@ -55,7 +52,7 @@
   - Description: Represents a project. Users can have many projects.
   - Fields:
     - id (string, unique identifier)
-    - name (string, required, unique)
+    - name (string, required)
     - Series (string)
     - Version (string)
     - created_at (datetime)
@@ -66,7 +63,7 @@
   - Description: Represents a task. Projects can have many tasks.
   - Fields:
     - id (string, unique identifier)
-    - title (string, required, unique)
+    - title (string, required)
     - created_at (datetime)
     - description (longtext)
     - share (boolean)
@@ -77,7 +74,7 @@
   - Description: Represents a material used in a project. Projects can have many materials.
   - Fields:
     - id (string, unique identifier)
-    - name (string, required, unique)
+    - name (string, required)
     - created_at (datetime)
     - description (longtext)
     - share (boolean)
@@ -95,7 +92,7 @@
     - created_at (datetime)
 
 
-## 6. Task Guidance for Agent
+## 6. Task Guidance
   All image uploads and management should be handled using Spatie Media Library
   PDF generation from an html template using Spatie's Browsershot 
   No validation of data in controllers, use Laravel's form requests
@@ -134,5 +131,3 @@
 - Competition submission format requirements
 
 ---
-
-(Use this file as a living document. Update as requirements and schemas evolve.) 
