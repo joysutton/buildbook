@@ -467,9 +467,17 @@
                         View Web Page (Enable sharing first)
                     </button>
                 @endif
-                <button class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-                    Download PDF
-                </button>
+                @if($project->share)
+                    <a href="{{ route('projects.pdf', $project) }}" 
+                       target="_blank"
+                       class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                        Download PDF
+                    </a>
+                @else
+                    <button disabled class="px-6 py-3 bg-gray-600 text-gray-400 rounded-lg cursor-not-allowed">
+                        Download PDF (Enable sharing first)
+                    </button>
+                @endif
             </div>
         </div>
     </div>
@@ -896,6 +904,9 @@
                             accept="image/*"
                             class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
+                        <div wire:loading wire:target="taskImageFile" class="text-blue-400 text-sm mt-1">
+                            Uploading file...
+                        </div>
                         @error('taskImageFile') 
                             <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -915,7 +926,8 @@
                     </button>
                     <button 
                         wire:click="uploadTaskImage"
-                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        {{ !$taskImageFileSelected ? 'disabled' : '' }}
                     >
                         Upload Image
                     </button>

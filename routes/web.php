@@ -23,7 +23,6 @@ Route::middleware(['auth'])->group(function () {
     // Project routes
     Volt::route('projects', 'projects.index')->name('projects.index');
     Volt::route('projects/create', 'projects.create')->name('projects.create');
-    Volt::route('projects/{project}', 'projects.show')->name('projects.show');
     Volt::route('projects/{project}/edit', 'projects.edit')->name('projects.edit');
 
     // Task routes
@@ -47,5 +46,10 @@ Route::get('/projects/{project}/share', function (App\Models\Project $project) {
     }
     return view('projects.share', compact('project'));
 })->name('projects.share');
+
+// PDF generation route
+Route::get('/projects/{project}/pdf', [App\Http\Controllers\PdfController::class, 'downloadProjectPdf'])
+    ->middleware(['auth'])
+    ->name('projects.pdf');
 
 require __DIR__.'/auth.php';

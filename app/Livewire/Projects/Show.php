@@ -68,6 +68,7 @@ class Show extends Component
     public bool $showTaskImageModal = false;
     public int $taskImageTaskId = 0;
     public $taskImageFile;
+    public bool $taskImageFileSelected = false;
     
     // Task image viewing
     public bool $showTaskImageViewModal = false;
@@ -523,6 +524,7 @@ class Show extends Component
     {
         $this->taskImageTaskId = $taskId;
         $this->taskImageFile = null;
+        $this->taskImageFileSelected = false;
         $this->showTaskImageModal = true;
     }
 
@@ -531,13 +533,13 @@ class Show extends Component
         $this->showTaskImageModal = false;
         $this->taskImageTaskId = 0;
         $this->taskImageFile = null;
+        $this->taskImageFileSelected = false;
     }
 
     public function updatedTaskImageFile()
     {
-        $this->validate([
-            'taskImageFile' => 'required|image|max:10240', // 10MB max
-        ]);
+        $this->taskImageFileSelected = $this->taskImageFile !== null;
+        // Validation will be handled in uploadTaskImage()
     }
 
     public function uploadTaskImage()
@@ -605,9 +607,7 @@ class Show extends Component
     
     public function updatedMainImageFile()
     {
-        $this->validate([
-            'mainImageFile' => 'required|image|max:10240', // 10MB max
-        ]);
+        // Validation will be handled in uploadMainImage()
     }
     
     public function uploadMainImage()
