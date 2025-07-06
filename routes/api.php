@@ -29,6 +29,9 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
     
+    // Dashboard routes
+    Route::get('/dashboard/stats', [\App\Http\Controllers\Api\DashboardController::class, 'stats']);
+    
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::patch('/profile', [ProfileController::class, 'update']);

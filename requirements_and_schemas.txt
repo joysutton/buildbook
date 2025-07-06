@@ -122,19 +122,17 @@
 - API documentation updated and current
 - Form request validation for all endpoints
 - Laravel Sanctum authentication
+- Media uploads via Spatie Media Library
 
 ### 🔄 In Progress / Next Steps
 - Frontend implementation using TALL stack
 - Component-based architecture with Tailwind CSS
 - 508 accessibility compliance
-- Media uploads via Spatie Media Library (will be implemented during frontend development)
 - PDF generation via Spatie Browsershot (requires frontend views first)
 
 ### 📋 Open Questions / Clarifications Needed
-- Media upload permissions and file type restrictions
 - PDF template design and customization options
 - Public sharing URL structure and security
-- Competition submission format requirements
 
 ## Dashboard Layout basics
 |-----------------|
@@ -185,4 +183,23 @@
   - The color pallete should fit the default dark format using dark greys as a background and light text for all dashboard pages.
   - Keep all color contrasts appropriate to accessability.
   - All interactions must be keyboard accessable matching 508 standards.
+
+  ## PDF Generation Requirements
+    - PDFs will be generated from their own page, not just the share page. 
+    - This pdf.html should be formatted with intent to be printed on 8.5 x 11 inch pages.
+    - Color pallete should be light, with clean white background and clearly read black and dark grey text. No extraneous design elements 
+      should be added to ensure clarity.
+    - For Tasks, Materials, and Reference images, only items selected to share should be included.
+    - This PDF page will have a cover page first, including the main hero image, the project name, series, version, user's Handle and the 
+      current date.
+    - Each page beyond the cover page should have a footer that includes the user's handle, project name, and date.
+    - After the cover page, the first section should be the reference images, not cropped but kept to a reasonable size for print, and the 
+      section should include a header reading "Reference Images".
+    - Next will be a list of materials, not as a table, but a list, only including the names, amounts, and descriptions. This section will 
+      have the header "Materials for the Project" and start after a page break after the reference images.
+    - After the materials section, again after a page break, will be the Tasks. This section should be set up in a two column alternating 
+      layout, with one column being the task's image (if it exists) and the other being the description. If no image exists, the task should 
+      span the full row. the first row will have the image on the left and desc on the right, then the next will have the desc on the left 
+      and image on the right, etc.
+
 ---

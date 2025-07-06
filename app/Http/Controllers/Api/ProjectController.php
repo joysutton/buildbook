@@ -14,7 +14,15 @@ class ProjectController extends Controller
 {
     public function index(): JsonResponse
     {
-        $projects = auth()->user()->projects()->with(['tasks.notes', 'materials.notes', 'notes'])->latest()->get();
+        $limit = request()->get('limit');
+        
+        $query = auth()->user()->projects()->with(['tasks.notes', 'materials.notes', 'notes'])->latest();
+        
+        if ($limit) {
+            $query->limit($limit);
+        }
+        
+        $projects = $query->get();
 
         return response()->json([
             'data' => $projects

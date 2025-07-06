@@ -16,9 +16,17 @@ class TaskController extends Controller
      */
     public function index(): JsonResponse
     {
-        $tasks = Task::whereHas('project', function ($query) {
+        $limit = request()->get('limit');
+        
+        $query = Task::whereHas('project', function ($query) {
             $query->where('user_id', auth()->id());
-        })->with(['project', 'notes'])->get();
+        })->with(['project', 'notes']);
+        
+        if ($limit) {
+            $query->limit($limit);
+        }
+        
+        $tasks = $query->get();
 
         return response()->json($tasks);
     }

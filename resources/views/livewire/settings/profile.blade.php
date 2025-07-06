@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use Livewire\Volt\Component;
+use Illuminate\Validation\Rule;
 
 new class extends Component {
     public string $username = '';
@@ -24,26 +25,26 @@ new class extends Component {
     }
 
     /**
-     * Update the profile information via API.
+     * Update the profile information.
      */
     public function updateProfileInformation(): void
     {
-        $response = Http::withToken(request()->bearerToken())
-            ->patch(url('/api/profile'), [
-                'username' => $this->username,
-                'email' => $this->email,
-                'handle' => $this->handle,
-                'bio' => $this->bio,
-            ]);
+        $this->validate([
+            'username' => ['required', 'string', 'max:255', Rule::unique('users', 'username')->ignore(auth()->id())],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore(auth()->id())],
+            'handle' => ['nullable', 'string', 'max:255'],
+            'bio' => ['nullable', 'string', 'max:10000'],
+        ]);
 
-        if ($response->successful()) {
-            $this->dispatch('profile-updated', username: $this->username);
-        } else {
-            $errors = $response->json('errors', []);
-            foreach ($errors as $field => $messages) {
-                $this->addError($field, $messages[0]);
-            }
-        }
+        $user = auth()->user();
+        $user->update([
+            'username' => $this->username,
+            'email' => $this->email,
+            'handle' => $this->handle,
+            'bio' => $this->bio,
+        ]);
+
+        $this->dispatch('profile-updated', username: $this->username);
     }
 
     /**
