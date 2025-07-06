@@ -42,10 +42,7 @@ class Task extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('progress_image')
-            ->singleFile()
-            ->acceptsFile(function ($file) {
-                return in_array($file->extension(), ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg']);
-            });
+            ->singleFile();
     }
 
     public function registerMediaConversions(Media $media = null): void

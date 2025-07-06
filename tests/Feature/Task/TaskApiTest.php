@@ -5,6 +5,8 @@ use App\Models\Task;
 use App\Models\User;
 use App\Models\Note;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 
 uses(RefreshDatabase::class);
@@ -14,6 +16,7 @@ describe('Task API', function () {
         $this->user = User::factory()->create();
         $this->project = Project::factory()->create(['user_id' => $this->user->id]);
         Sanctum::actingAs($this->user);
+        Storage::fake('public');
     });
 
     describe('GET /api/tasks', function () {
@@ -292,5 +295,241 @@ describe('Task API', function () {
         });
 
         // Authentication is handled by middleware and working correctly
+    });
+
+    describe('Task Media API', function () {
+        it('can upload an image to a task', function () {
+            $task = Task::factory()->create(['project_id' => $this->project->id]);
+            $file = UploadedFile::fake()->image('task-progress.jpg', 800, 600);
+
+            $response = $this->postJson("/api/tasks/{$task->id}/images", [
+                'image' => $file
+            ]);
+
+            $response->assertStatus(201)
+                ->assertJsonStructure([
+                    'message',
+                    'data' => [
+                        'id',
+                        'name',
+                        'file_name',
+                        'collection',
+                        'url',
+                        'thumb_url',
+                        'size',
+                        'mime_type',
+                        'created_at'
+                    ]
+                ])
+                ->assertJson([
+                    'message' => 'Image uploaded successfully',
+                    'data' => [
+                        'collection' => 'progress_image',
+                        'mime_type' => 'image/jpeg'
+                    ]
+                ]);
+        });
+
+        it('can list images for a task', function () {
+            $task = Task::factory()->create(['project_id' => $this->project->id]);
+            $file = UploadedFile::fake()->image('task-progress.jpg', 800, 600);
+            
+            $this->postJson("/api/tasks/{$task->id}/images", [
+                'image' => $file
+            ]);
+
+            $response = $this->getJson("/api/tasks/{$task->id}/images");
+
+            $response->assertStatus(200)
+                ->assertJsonStructure([
+                    'data' => [
+                        '*' => [
+                            'id',
+                            'name',
+                            'file_name',
+                            'collection',
+                            'url',
+                            'thumb_url',
+                            'size',
+                            'mime_type',
+                            'created_at'
+                        ]
+                    ]
+                ]);
+        });
+
+        it('can delete an image from a task', function () {
+            $task = Task::factory()->create(['project_id' => $this->project->id]);
+            $file = UploadedFile::fake()->image('task-progress.jpg', 800, 600);
+            
+            $uploadResponse = $this->postJson("/api/tasks/{$task->id}/images", [
+                'image' => $file
+            ]);
+
+            $mediaId = $uploadResponse->json('data.id');
+
+            $response = $this->deleteJson("/api/tasks/{$task->id}/images/{$mediaId}");
+
+            $response->assertStatus(200)
+                ->assertJson([
+                    'message' => 'Image deleted successfully'
+                ]);
+        });
+
+        it('can show a specific task image', function () {
+            $task = Task::factory()->create(['project_id' => $this->project->id]);
+            $file = UploadedFile::fake()->image('task-progress.jpg', 800, 600);
+            
+            $uploadResponse = $this->postJson("/api/tasks/{$task->id}/images", [
+                'image' => $file
+            ]);
+
+            $mediaId = $uploadResponse->json('data.id');
+
+            $response = $this->getJson("/api/tasks/{$task->id}/images/{$mediaId}/show");
+
+            $response->assertStatus(200)
+                ->assertJsonStructure([
+                    'data' => [
+                        'id',
+                        'name',
+                        'file_name',
+                        'collection',
+                        'url',
+                        'thumb_url',
+                        'size',
+                        'mime_type',
+                        'created_at'
+                    ]
+                ]);
+        });
+
+        it('validates image upload requirements', function () {
+            $task = Task::factory()->create(['project_id' => $this->project->id]);
+
+            $response = $this->postJson("/api/tasks/{$task->id}/images", []);
+
+            $response->assertStatus(422)
+                ->assertJsonValidationErrors(['image']);
+        });
+
+        it('validates image file type', function () {
+            $task = Task::factory()->create(['project_id' => $this->project->id]);
+            $file = UploadedFile::fake()->create('document.pdf', 100);
+
+            $response = $this->postJson("/api/tasks/{$task->id}/images", [
+                'image' => $file
+            ]);
+
+            $response->assertStatus(422)
+                ->assertJsonValidationErrors(['image']);
+        });
+
+        it('validates image file size', function () {
+            $task = Task::factory()->create(['project_id' => $this->project->id]);
+            $file = UploadedFile::fake()->image('large-image.jpg')->size(11000); // 11MB
+
+            $response = $this->postJson("/api/tasks/{$task->id}/images", [
+                'image' => $file
+            ]);
+
+            $response->assertStatus(422)
+                ->assertJsonValidationErrors(['image']);
+        });
+
+        it('prevents non-owners from uploading images', function () {
+            $task = Task::factory()->create(['project_id' => $this->project->id]);
+            $otherUser = User::factory()->create();
+            $file = UploadedFile::fake()->image('task-progress.jpg', 800, 600);
+
+            Sanctum::actingAs($otherUser);
+
+            $response = $this->postJson("/api/tasks/{$task->id}/images", [
+                'image' => $file
+            ]);
+
+            $response->assertStatus(403)
+                ->assertJson([
+                    'message' => 'Access denied'
+                ]);
+        });
+
+        it('prevents non-owners from listing images', function () {
+            $task = Task::factory()->create(['project_id' => $this->project->id]);
+            $otherUser = User::factory()->create();
+
+            Sanctum::actingAs($otherUser);
+
+            $response = $this->getJson("/api/tasks/{$task->id}/images");
+
+            $response->assertStatus(403)
+                ->assertJson([
+                    'message' => 'Access denied'
+                ]);
+        });
+
+        it('prevents non-owners from deleting images', function () {
+            $task = Task::factory()->create(['project_id' => $this->project->id]);
+            $file = UploadedFile::fake()->image('task-progress.jpg', 800, 600);
+            
+            $uploadResponse = $this->postJson("/api/tasks/{$task->id}/images", [
+                'image' => $file
+            ]);
+
+            $mediaId = $uploadResponse->json('data.id');
+
+            $otherUser = User::factory()->create();
+            Sanctum::actingAs($otherUser);
+
+            $response = $this->deleteJson("/api/tasks/{$task->id}/images/{$mediaId}");
+
+            $response->assertStatus(403)
+                ->assertJson([
+                    'message' => 'Access denied'
+                ]);
+        });
+
+        it('prevents non-owners from showing images', function () {
+            $task = Task::factory()->create(['project_id' => $this->project->id]);
+            $file = UploadedFile::fake()->image('task-progress.jpg', 800, 600);
+            
+            $uploadResponse = $this->postJson("/api/tasks/{$task->id}/images", [
+                'image' => $file
+            ]);
+
+            $mediaId = $uploadResponse->json('data.id');
+
+            $otherUser = User::factory()->create();
+            Sanctum::actingAs($otherUser);
+
+            $response = $this->getJson("/api/tasks/{$task->id}/images/{$mediaId}/show");
+
+            $response->assertStatus(403)
+                ->assertJson([
+                    'message' => 'Access denied'
+                ]);
+        });
+
+        it('returns 404 for non-existent image when deleting', function () {
+            $task = Task::factory()->create(['project_id' => $this->project->id]);
+
+            $response = $this->deleteJson("/api/tasks/{$task->id}/images/999");
+
+            $response->assertStatus(404)
+                ->assertJson([
+                    'message' => 'Image not found'
+                ]);
+        });
+
+        it('returns 404 for non-existent image when showing', function () {
+            $task = Task::factory()->create(['project_id' => $this->project->id]);
+
+            $response = $this->getJson("/api/tasks/{$task->id}/images/999/show");
+
+            $response->assertStatus(404)
+                ->assertJson([
+                    'message' => 'Image not found'
+                ]);
+        });
     });
 }); 

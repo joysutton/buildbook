@@ -48,15 +48,9 @@ class Project extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('main')
-            ->singleFile()
-            ->acceptsFile(function ($file) {
-                return in_array($file->extension(), ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg']);
-            });
+            ->singleFile();
 
-        $this->addMediaCollection('references')
-            ->acceptsFile(function ($file) {
-                return in_array($file->extension(), ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg']);
-            });
+        $this->addMediaCollection('references');
     }
 
     public function registerMediaConversions(Media $media = null): void
