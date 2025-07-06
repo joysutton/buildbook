@@ -753,6 +753,204 @@ Notes are polymorphic and can be attached to projects, tasks, or materials. The 
 
 ---
 
+## Media Endpoints
+
+Media endpoints handle image uploads, retrieval, and management using Spatie Media Library. Images are stored in collections and support web-friendly formats (jpg, jpeg, png, webp, gif, svg).
+
+### Project Media
+
+#### Upload Project Image
+**POST** `/projects/{project}/images/{collection}`
+
+Upload an image to a project collection. Collections: `main` (single image) or `references` (multiple images).
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Request Body:** `multipart/form-data`
+```
+image: file (required, max 10MB, formats: jpg, jpeg, png, webp, gif, svg)
+```
+
+**Response (201):**
+```json
+{
+    "message": "Image uploaded successfully",
+    "data": {
+        "id": 1,
+        "name": "project-hero.jpg",
+        "file_name": "project-hero.jpg",
+        "collection": "main",
+        "url": "https://example.com/storage/1/project-hero.jpg",
+        "thumb_url": "https://example.com/storage/1/conversions/project-hero-thumb.jpg",
+        "size": 1024000,
+        "mime_type": "image/jpeg",
+        "created_at": "2025-07-04T20:00:00.000000Z"
+    }
+}
+```
+
+#### List Project Images
+**GET** `/projects/{project}/images/{collection}`
+
+Get all images in a project collection.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Response (200):**
+```json
+{
+    "data": [
+        {
+            "id": 1,
+            "name": "project-hero.jpg",
+            "file_name": "project-hero.jpg",
+            "collection": "main",
+            "url": "https://example.com/storage/1/project-hero.jpg",
+            "thumb_url": "https://example.com/storage/1/conversions/project-hero-thumb.jpg",
+            "size": 1024000,
+            "mime_type": "image/jpeg",
+            "created_at": "2025-07-04T20:00:00.000000Z"
+        }
+    ]
+}
+```
+
+#### Delete Project Image
+**DELETE** `/projects/{project}/images/{mediaId}`
+
+Delete a specific image from a project.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Response (200):**
+```json
+{
+    "message": "Image deleted successfully"
+}
+```
+
+#### Show Project Image
+**GET** `/projects/{project}/images/{mediaId}/show`
+
+Get details of a specific project image.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Response (200):**
+```json
+{
+    "data": {
+        "id": 1,
+        "name": "project-hero.jpg",
+        "file_name": "project-hero.jpg",
+        "collection": "main",
+        "url": "https://example.com/storage/1/project-hero.jpg",
+        "thumb_url": "https://example.com/storage/1/conversions/project-hero-thumb.jpg",
+        "size": 1024000,
+        "mime_type": "image/jpeg",
+        "created_at": "2025-07-04T20:00:00.000000Z"
+    }
+}
+```
+
+### Task Media
+
+#### Upload Task Image
+**POST** `/tasks/{task}/images`
+
+Upload a progress image to a task.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Request Body:** `multipart/form-data`
+```
+image: file (required, max 10MB, formats: jpg, jpeg, png, webp, gif, svg)
+```
+
+**Response (201):**
+```json
+{
+    "message": "Image uploaded successfully",
+    "data": {
+        "id": 2,
+        "name": "task-progress.jpg",
+        "file_name": "task-progress.jpg",
+        "collection": "progress_image",
+        "url": "https://example.com/storage/2/task-progress.jpg",
+        "thumb_url": "https://example.com/storage/2/conversions/task-progress-thumb.jpg",
+        "size": 512000,
+        "mime_type": "image/jpeg",
+        "created_at": "2025-07-04T20:05:00.000000Z"
+    }
+}
+```
+
+#### List Task Images
+**GET** `/tasks/{task}/images`
+
+Get all images for a task.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Response (200):**
+```json
+{
+    "data": [
+        {
+            "id": 2,
+            "name": "task-progress.jpg",
+            "file_name": "task-progress.jpg",
+            "collection": "progress_image",
+            "url": "https://example.com/storage/2/task-progress.jpg",
+            "thumb_url": "https://example.com/storage/2/conversions/task-progress-thumb.jpg",
+            "size": 512000,
+            "mime_type": "image/jpeg",
+            "created_at": "2025-07-04T20:05:00.000000Z"
+        }
+    ]
+}
+```
+
+#### Delete Task Image
+**DELETE** `/tasks/{task}/images/{mediaId}`
+
+Delete a specific image from a task.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Response (200):**
+```json
+{
+    "message": "Image deleted successfully"
+}
+```
+
+#### Show Task Image
+**GET** `/tasks/{task}/images/{mediaId}/show`
+
+Get details of a specific task image.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Response (200):**
+```json
+{
+    "data": {
+        "id": 2,
+        "name": "task-progress.jpg",
+        "file_name": "task-progress.jpg",
+        "collection": "progress_image",
+        "url": "https://example.com/storage/2/task-progress.jpg",
+        "thumb_url": "https://example.com/storage/2/conversions/task-progress-thumb.jpg",
+        "size": 512000,
+        "mime_type": "image/jpeg",
+        "created_at": "2025-07-04T20:05:00.000000Z"
+    }
+}
+```
+
+---
+
 ## Error Responses
 
 ### Validation Errors (422)

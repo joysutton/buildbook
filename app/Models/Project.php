@@ -7,11 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Project extends Model
+class Project extends Model implements HasMedia
 {
     /** @use HasFactory<\Database\Factories\ProjectFactory> */
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
         'user_id',
@@ -40,5 +43,28 @@ class Project extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(\App\Models\Note::class, 'noteable');
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('main')
+            ->singleFile()
+            ->acceptsFile(function ($file) {
+                return in_array($file->extension(), ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg']);
+            });
+
+        $this->addMediaCollection('references')
+            ->acceptsFile(function ($file) {
+                return in_array($file->extension(), ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg']);
+            });
+    }
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(300)
+            ->height(200)
+            ->sharpen(10)
+            ->nonQueued();
     }
 }

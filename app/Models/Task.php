@@ -6,10 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Task extends Model
+class Task extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
         'project_id',
@@ -34,5 +37,23 @@ class Task extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(\App\Models\Note::class, 'noteable');
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('progress_image')
+            ->singleFile()
+            ->acceptsFile(function ($file) {
+                return in_array($file->extension(), ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg']);
+            });
+    }
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(300)
+            ->height(200)
+            ->sharpen(10)
+            ->nonQueued();
     }
 }

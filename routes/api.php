@@ -46,8 +46,20 @@ Route::middleware('auth:sanctum')->group(function () {
     // Project routes
     Route::apiResource('projects', \App\Http\Controllers\Api\ProjectController::class);
     
+    // Project media routes
+    Route::post('/projects/{project}/images/{collection}', [\App\Http\Controllers\Api\ProjectController::class, 'uploadImage']);
+    Route::get('/projects/{project}/images/{collection}', [\App\Http\Controllers\Api\ProjectController::class, 'listImages']);
+    Route::delete('/projects/{project}/images/{mediaId}', [\App\Http\Controllers\Api\ProjectController::class, 'deleteImage']);
+    Route::get('/projects/{project}/images/{mediaId}/show', [\App\Http\Controllers\Api\ProjectController::class, 'showImage']);
+    
     // Task routes
     Route::apiResource('tasks', TaskController::class);
+    
+    // Task media routes
+    Route::post('/tasks/{task}/images', [TaskController::class, 'uploadImage']);
+    Route::get('/tasks/{task}/images', [TaskController::class, 'listImages']);
+    Route::delete('/tasks/{task}/images/{mediaId}', [TaskController::class, 'deleteImage']);
+    Route::get('/tasks/{task}/images/{mediaId}/show', [TaskController::class, 'showImage']);
     
     // Material routes
     Route::get('/projects/{project}/materials', [\App\Http\Controllers\Api\MaterialController::class, 'index']);

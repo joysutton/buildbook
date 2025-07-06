@@ -91,6 +91,12 @@
     - content (string, required)
     - created_at (datetime)
 
+- Media Library rules:
+  -Projects have two collections, "main" and "references". Main contains one item, references can have unlimited images.
+  -Tasks have one collection containing one image 'progress_image'
+  -Images should all have a reasonable thumbnail size and a full image option.
+  -Images should be restricted to web friendly formats.
+  -No images are required.
 
 ## 6. Task Guidance
   All image uploads and management should be handled using Spatie Media Library
@@ -130,4 +136,53 @@
 - Public sharing URL structure and security
 - Competition submission format requirements
 
+## Dashboard Layout basics
+|-----------------|
+|  | Header area  |
+|  | info area    |
+|  | Section tabs |
+|  | Content area |
+|  | Buttons      |
+|-----------------|
+ - Sidebar contains a "Projects" section with the most recent 10 projects listed underneath and a "view all" that links to
+    a card based, paginated view of all projects. This facillitates clicking directly to the most recent projects directly from
+    the sidebar.
+ - Sidebar also contains a profile editing link like standard Livewire sites along with the logout option.
+ - On single project view page, the sections are as follows:
+    - Header has the main (hero) image as a background image oriented to the right and with a fade out effect towards the left. To the 
+      left is the Project Title, Series, Version, and a checkbox reflective of the share bool that can be checked 
+      to control this value.
+    - Info area contains the desciption to the left, and a scrollable area to the right containing the notes associated with this 
+      project along with a button to add a new note which will open a reuasble modal component for adding a note to this project.
+    - For the Section tabs, we will have three tab buttons to control the content area. These tab sections will be Tasks, Materials, 
+      and Reference Images. These tabs should render without a page refresh.
+    - For the content areas controlled via tabs, the layouts are as follows:
+      - Tasks will have the tasks layed out in a columnar format in cards, to the far left is the image thumbnail if it exists,
+      then to the right of that the content area, then the far right is the edit and delete buttons which will open a confirm delete 
+      modal or an edit task modal. The content area in the center has three rows, with the title first, description below, then below 
+      that a row containing a date field that is editable for the due date, then a section for the completion date. if it is not 
+      complete, it shows a "Completed?" checkbox, if it is comeplete, show the date it was completed, finally to the right side of 
+      this row is a "Share?" checkbox. Along the top on the right of the tasks section should be an "Add New Task" that opens a create 
+      task modal.
+      - Materials will show all materials in a table format. This table have rows tall enough to show three rows of text for the 
+      description. The table rows should be Title, description, amount, source, cost (which should have the est cost and actual cost stacked 
+      in their row), acquired (rows contain checkboxes that can be updated directly from the table), and stacked buttons for edit and delete.
+      Like the Tasks, delete should show a confirm modal and edit should open an edit modal. The bottom row of the table should have an area 
+      for sums of the est cost and actual cost values and a percentage value totaling the percent of items acquired.
+      - The Reference Images section should have the images in a card format that can be clicked to show the full image in a modal. The 
+      cards should have an overlay button on the top right corner to delete an image that triggers a confirm delete modal. The top right 
+      corner of this section should have an "Add Image" button. Under each image card should be a checkmark for "Share image" for that image.
+      -For both Tasks and Materials, when a user clicks on their row/card, a section pops out below it, shifting the items below it down,
+      showing all notes and a button to add another note to the item, using the same modal as the notes on projects.
+  - The show all projects view should have the projects as cards in three wide columns with the main image as a faded background, then the 
+    Title, Series, and Version alighned to the bottom of the card.
+  - The buttons area should have a button that links to the web view of the project (design forthcoming) and a a Download as PDF button 
+    (also forthcoming).
+  - Modals: Add/Edit Notes, Add/Edit Tasks. Add/Edit Materials, Add Reference Images, Confirm Delete, Edit Project. Simple form formatting
+      with confirm and cancel buttons.
+  - Tabs should be no-refresh, utilizing Alpine.js and be formatted as square buttons with clear atctive and hover states.
+  - Major components: Sidebar, project card view, project cards, project show view, tasks, materials, reference images.
+  - The color pallete should fit the default dark format using dark greys as a background and light text for all dashboard pages.
+  - Keep all color contrasts appropriate to accessability.
+  - All interactions must be keyboard accessable matching 508 standards.
 ---
