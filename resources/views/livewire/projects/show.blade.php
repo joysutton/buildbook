@@ -98,9 +98,30 @@
                         @if($project->notes->count() > 0)
                             <div class="space-y-3">
                                 @foreach($project->notes as $note)
-                                    <div class="border-l-4 border-blue-500 pl-3">
-                                        <p class="text-gray-300 text-sm">{{ $note->content }}</p>
-                                        <p class="text-gray-500 text-xs mt-1">{{ $note->created_at->format('M j, Y g:i A') }}</p>
+                                    <div class="border-l-4 border-blue-500 pl-3 group">
+                                        <div class="flex items-start justify-between">
+                                            <div class="flex-1">
+                                                <p class="text-gray-300 text-sm">{{ $note->content }}</p>
+                                                <p class="text-gray-500 text-xs mt-1">{{ $note->created_at->format('M j, Y g:i A') }}</p>
+                                            </div>
+                                            <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                                                <button wire:click="editNote({{ $note->id }})" 
+                                                        class="p-1 text-gray-400 hover:text-blue-400 transition-colors"
+                                                        title="Edit note">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                    </svg>
+                                                </button>
+                                                <button wire:click="deleteNote({{ $note->id }})" 
+                                                        wire:confirm="Are you sure you want to delete this note?"
+                                                        class="p-1 text-gray-400 hover:text-red-400 transition-colors"
+                                                        title="Delete note">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
@@ -152,8 +173,8 @@
                     @if($project->tasks->count() > 0)
                         <div class="space-y-4">
                             @foreach($project->tasks as $task)
-                                <div class="bg-gray-800 rounded-lg border border-gray-600 overflow-hidden">
-                                    <div class="p-4 cursor-pointer hover:bg-gray-750 transition-colors" wire:click="toggleTaskNotes({{ $task->id }})">
+                                <div class="bg-gray-800 rounded-lg border border-gray-600 overflow-hidden relative">
+                                    <div class="p-4">
                                         <div class="flex items-start space-x-4">
                                             <!-- Task image thumbnail -->
                                             <div class="flex-shrink-0 relative group">
@@ -189,14 +210,12 @@
                                                     </svg>
                                                 </button>
                                             </div>
-
                                             <!-- Task content -->
                                             <div class="flex-1">
                                                 <h4 class="text-lg font-medium text-gray-100 mb-2">{{ $task->title }}</h4>
                                                 @if($task->description)
                                                     <p class="text-gray-400 mb-3">{{ $task->description }}</p>
                                                 @endif
-                                                
                                                 <div class="flex items-center justify-between">
                                                     <div class="flex items-center space-x-4">
                                                         <div>
@@ -246,9 +265,14 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <!-- Vertical Notes Tab -->
+                                            <button wire:click="toggleTaskNotes({{ $task->id }})"
+                                                    class="absolute top-0 right-0 mt-0 mr-0 bg-gray-300 text-gray-800 px-5 py-2 rounded-bl-lg shadow-lg font-semibold text-xs tracking-widest uppercase hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 z-10"
+                                                    style="">
+                                                Toggle Notes
+                                            </button>
                                         </div>
                                     </div>
-
                                     <!-- Expandable Notes Section -->
                                     @if($expandedTaskId === $task->id)
                                         <div class="border-t border-gray-600 bg-gray-750 p-4">
@@ -263,9 +287,30 @@
                                             @if($task->notes->count() > 0)
                                                 <div class="space-y-3">
                                                     @foreach($task->notes as $note)
-                                                        <div class="border-l-4 border-blue-500 pl-3">
-                                                            <p class="text-gray-300 text-sm">{{ $note->content }}</p>
-                                                            <p class="text-gray-500 text-xs mt-1">{{ $note->created_at->format('M j, Y g:i A') }}</p>
+                                                        <div class="border-l-4 border-blue-500 pl-3 group">
+                                                            <div class="flex items-start justify-between">
+                                                                <div class="flex-1">
+                                                                    <p class="text-gray-300 text-sm">{{ $note->content }}</p>
+                                                                    <p class="text-gray-500 text-xs mt-1">{{ $note->created_at->format('M j, Y g:i A') }}</p>
+                                                                </div>
+                                                                <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                                                                    <button wire:click="editNote({{ $note->id }})" 
+                                                                            class="p-1 text-gray-400 hover:text-blue-400 transition-colors"
+                                                                            title="Edit note">
+                                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                                        </svg>
+                                                                    </button>
+                                                                    <button wire:click="deleteNote({{ $note->id }})" 
+                                                                            wire:confirm="Are you sure you want to delete this note?"
+                                                                            class="p-1 text-gray-400 hover:text-red-400 transition-colors"
+                                                                            title="Delete note">
+                                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     @endforeach
                                                 </div>
@@ -364,9 +409,30 @@
                                                     @if($material->notes->count() > 0)
                                                         <div class="space-y-3">
                                                             @foreach($material->notes as $note)
-                                                                <div class="border-l-4 border-blue-500 pl-3">
-                                                                    <p class="text-gray-300 text-sm">{{ $note->content }}</p>
-                                                                    <p class="text-gray-500 text-xs mt-1">{{ $note->created_at->format('M j, Y g:i A') }}</p>
+                                                                <div class="border-l-4 border-blue-500 pl-3 group">
+                                                                    <div class="flex items-start justify-between">
+                                                                        <div class="flex-1">
+                                                                            <p class="text-gray-300 text-sm">{{ $note->content }}</p>
+                                                                            <p class="text-gray-500 text-xs mt-1">{{ $note->created_at->format('M j, Y g:i A') }}</p>
+                                                                        </div>
+                                                                        <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                                                                            <button wire:click="editNote({{ $note->id }})" 
+                                                                                    class="p-1 text-gray-400 hover:text-blue-400 transition-colors"
+                                                                                    title="Edit note">
+                                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                                        </svg>
+                                                                    </button>
+                                                                    <button wire:click="deleteNote({{ $note->id }})" 
+                                                                            wire:confirm="Are you sure you want to delete this note?"
+                                                                            class="p-1 text-gray-400 hover:text-red-400 transition-colors"
+                                                                            title="Delete note">
+                                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                                        </svg>
+                                                                    </button>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             @endforeach
                                                         </div>
@@ -412,13 +478,13 @@
                     </div>
                     
                     @if($project->getMedia('references')->count() > 0)
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        <div class="flex flex-wrap gap-4">
                             @foreach($project->getMedia('references') as $media)
-                                <div class="relative group">
-                                    <div class="relative overflow-hidden rounded-lg bg-gray-800 border border-gray-600">
+                                <div class="relative group flex-shrink-0">
+                                    <div class="relative overflow-hidden rounded-lg bg-gray-800 border border-gray-600 max-w-xs">
                                         <img src="{{ $media->getUrl() }}" 
                                              alt="Reference image" 
-                                             class="w-full h-48 object-cover cursor-pointer"
+                                             class="w-auto h-auto max-w-full max-h-64 object-contain cursor-pointer"
                                              wire:click="openImageModal('{{ $media->getUrl() }}')">
                                         
                                         <!-- Delete button overlay -->
@@ -486,7 +552,9 @@
     @if($showNoteModal)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div class="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
-                <h3 class="text-lg font-semibold text-gray-100 mb-4">Add Note</h3>
+                <h3 class="text-lg font-semibold text-gray-100 mb-4">
+                    {{ $editingNoteId ? 'Edit Note' : 'Add Note' }}
+                </h3>
                 
                 <div class="mb-4">
                     <label for="noteContent" class="block text-sm font-medium text-gray-300 mb-2">Note Content</label>
@@ -510,10 +578,10 @@
                         Cancel
                     </button>
                     <button 
-                        wire:click="saveNote"
+                        wire:click="{{ $editingNoteId ? 'updateNote' : 'saveNote' }}"
                         class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                     >
-                        Save Note
+                        {{ $editingNoteId ? 'Update Note' : 'Save Note' }}
                     </button>
                 </div>
             </div>

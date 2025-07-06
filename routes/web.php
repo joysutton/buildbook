@@ -52,4 +52,6 @@ Route::get('/projects/{project}/pdf', [App\Http\Controllers\PdfController::class
     ->middleware(['auth'])
     ->name('projects.pdf');
 
+
+
 require __DIR__.'/auth.php';

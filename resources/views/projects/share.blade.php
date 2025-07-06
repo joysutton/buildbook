@@ -300,12 +300,14 @@
                 @endphp
                 
                 @if($sharedImages->count() > 0)
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="flex flex-wrap gap-4">
                         @foreach($sharedImages as $media)
-                            <div class="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
-                                <img src="{{ $media->getUrl() }}" 
-                                     alt="Reference image" 
-                                     class="w-full h-48 object-cover">
+                            <div class="flex-shrink-0">
+                                <div class="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 max-w-xs">
+                                    <img src="{{ $media->getUrl() }}" 
+                                         alt="Reference image" 
+                                         class="w-auto h-auto max-w-full max-h-64 object-contain">
+                                </div>
                             </div>
                         @endforeach
                     </div>

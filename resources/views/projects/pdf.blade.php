@@ -83,16 +83,25 @@
             margin-bottom: 0.5in;
         }
         
-        .image-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
             gap: 0.25in;
             margin-bottom: 0.25in;
         }
         
+        .reference-image-wrapper {
+            flex: 0 0 auto;
+            max-width: 3.5in;
+            max-height: 4.5in;
+            page-break-inside: avoid;
+        }
+        
         .reference-image {
-            width: 100%;
-            height: 3.5in;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 4.5in;
             object-fit: contain;
         }
         
@@ -212,11 +221,13 @@
             <h2 class="section-header">Reference Images</h2>
             
             <div class="reference-images">
-                <div class="image-grid">
+                <div class="image-container">
                     @foreach($sharedImages as $media)
-                        <img src="{{ $media->getUrl() }}" 
-                             alt="Reference image" 
-                             class="reference-image">
+                        <div class="reference-image-wrapper">
+                            <img src="{{ $media->getUrl() }}" 
+                                 alt="Reference image" 
+                                 class="reference-image">
+                        </div>
                     @endforeach
                 </div>
             </div>

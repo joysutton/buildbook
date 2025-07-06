@@ -19,6 +19,7 @@ class Show extends Component
     public string $noteContent = '';
     public string $noteableType = '';
     public int $noteableId = 0;
+    public int $editingNoteId = 0;
 
     // Task management
     public bool $showTaskModal = false;
@@ -125,6 +126,7 @@ class Show extends Component
         $this->noteContent = '';
         $this->noteableType = '';
         $this->noteableId = 0;
+        $this->editingNoteId = 0;
     }
 
     public function saveNote()
@@ -158,6 +160,55 @@ class Show extends Component
         $this->project->load(['tasks.notes', 'materials.notes', 'notes']);
 
         $this->closeNoteModal();
+    }
+
+    public function editNote($noteId)
+    {
+        try {
+            $note = Note::where('user_id', auth()->id())->findOrFail($noteId);
+            $this->noteContent = $note->content;
+            $this->noteableType = $note->noteable_type === 'App\Models\Project' ? 'project' : 
+                                 ($note->noteable_type === 'App\Models\Task' ? 'task' : 'material');
+            $this->noteableId = $note->noteable_id;
+            $this->editingNoteId = $noteId;
+            $this->showNoteModal = true;
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('Error editing note: ' . $e->getMessage(), [
+                'note_id' => $noteId,
+                'user_id' => auth()->id(),
+                'exception' => $e
+            ]);
+            
+            // You could also add a session flash message here
+            session()->flash('error', 'Unable to edit note. Please try again.');
+        }
+    }
+
+    public function updateNote()
+    {
+        $this->validate([
+            'noteContent' => 'required|string|max:1000',
+        ]);
+
+        $note = Note::where('user_id', auth()->id())->findOrFail($this->editingNoteId);
+        $note->update(['content' => $this->noteContent]);
+
+        // Refresh the project data
+        $this->project->refresh();
+        $this->project->load(['tasks.notes', 'materials.notes', 'notes']);
+
+        $this->closeNoteModal();
+    }
+
+    public function deleteNote($noteId)
+    {
+        $note = Note::where('user_id', auth()->id())->findOrFail($noteId);
+        $note->delete();
+
+        // Refresh the project data
+        $this->project->refresh();
+        $this->project->load(['tasks.notes', 'materials.notes', 'notes']);
     }
 
     public function render()

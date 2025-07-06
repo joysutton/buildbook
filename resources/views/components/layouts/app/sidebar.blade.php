@@ -3,8 +3,8 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+    <body class="min-h-screen bg-gray-900">
+        <flux:sidebar sticky stashable class="border-e border-gray-600 bg-gray-800">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
             <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
@@ -15,27 +15,21 @@
                 <flux:navlist.group :heading="__('Sewing Projects')" class="grid">
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
                     <flux:navlist.item icon="folder-git-2" :href="route('projects.index')" :current="request()->routeIs('projects.*')" wire:navigate>{{ __('Projects') }}</flux:navlist.item>
-                    <flux:navlist.item icon="check-circle" :href="route('tasks.index')" :current="request()->routeIs('tasks.*')" wire:navigate>{{ __('Tasks') }}</flux:navlist.item>
-                    <flux:navlist.item icon="cube" :href="route('materials.index')" :current="request()->routeIs('materials.*')" wire:navigate>{{ __('Materials') }}</flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
 
+            <!-- Recent Projects -->
+            <div class="px-3 py-2">
+                <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Recent Projects</h3>
+                <livewire:recent-projects />
+            </div>
+
             <flux:spacer />
-
-            <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                {{ __('Repository') }}
-                </flux:navlist.item>
-
-                <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                {{ __('Documentation') }}
-                </flux:navlist.item>
-            </flux:navlist>
 
             <!-- Desktop User Menu -->
             <flux:dropdown class="hidden lg:block" position="bottom" align="start">
                 <flux:profile
-                    :name="auth()->user()->name"
+                    :name="auth()->user()->username"
                     :initials="auth()->user()->initials()"
                     icon:trailing="chevrons-up-down"
                 />
@@ -46,14 +40,14 @@
                             <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                                 <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
                                     <span
-                                        class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
+                                        class="flex h-full w-full items-center justify-center rounded-lg bg-gray-600 text-white"
                                     >
                                         {{ auth()->user()->initials() }}
                                     </span>
                                 </span>
 
                                 <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
+                                    <span class="truncate font-semibold">{{ auth()->user()->username }}</span>
                                     <span class="truncate text-xs">{{ auth()->user()->email }}</span>
                                 </div>
                             </div>
@@ -96,14 +90,14 @@
                             <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                                 <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
                                     <span
-                                        class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
+                                        class="flex h-full w-full items-center justify-center rounded-lg bg-gray-600 text-white"
                                     >
                                         {{ auth()->user()->initials() }}
                                     </span>
                                 </span>
 
                                 <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
+                                    <span class="truncate font-semibold">{{ auth()->user()->username }}</span>
                                     <span class="truncate text-xs">{{ auth()->user()->email }}</span>
                                 </div>
                             </div>
@@ -129,6 +123,8 @@
         </flux:header>
 
         {{ $slot }}
+
+
 
         @fluxScripts
     </body>
