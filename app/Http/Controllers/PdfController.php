@@ -25,6 +25,20 @@ class PdfController extends Controller
         }
 
         try {
+            // Validate required environment variables
+            $nodeBinary = env('NODE_BINARY_PATH');
+            $npmBinary = env('NPM_BINARY_PATH');
+            $chromePath = env('CHROME_PATH');
+            
+            if (!$nodeBinary || !$npmBinary || !$chromePath) {
+                Log::error('PDF generation failed: Missing required environment variables', [
+                    'NODE_BINARY_PATH' => $nodeBinary ? 'set' : 'missing',
+                    'NPM_BINARY_PATH' => $npmBinary ? 'set' : 'missing',
+                    'CHROME_PATH' => $chromePath ? 'set' : 'missing',
+                ]);
+                return response()->json(['error' => 'PDF generation not configured. Please set NODE_BINARY_PATH, NPM_BINARY_PATH, and CHROME_PATH environment variables.'], 500);
+            }
+            
             // Load project with necessary relationships for PDF generation
             $project->load([
                 'user',
@@ -38,9 +52,9 @@ class PdfController extends Controller
             $html = view('projects.pdf', compact('project'))->render();
             
             $pdf = Browsershot::html($html)
-                ->setNodeBinary(env('NODE_BINARY_PATH', 'C:\Users\Joy\.config\herd\bin\nvm\v23.11.0\node.exe'))
-                ->setNpmBinary(env('NPM_BINARY_PATH', 'C:\Users\Joy\.config\herd\bin\nvm\v23.11.0\npm.cmd'))
-                ->setChromePath(env('CHROME_PATH', 'C:\Users\Joy\.cache\puppeteer\chrome\win64-138.0.7204.92\chrome-win64\chrome.exe'))
+                ->setNodeBinary($nodeBinary)
+                ->setNpmBinary($npmBinary)
+                ->setChromePath($chromePath)
                 ->format('A4')
                 ->margins(20, 20, 20, 20)
                 ->showBackground()

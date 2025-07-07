@@ -103,6 +103,37 @@ Revokes the current access token.
 
 ---
 
+## Dashboard Endpoints
+
+### Get Dashboard Stats
+**GET** `/dashboard/stats`
+
+Returns dashboard statistics for the authenticated user.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Response (200):**
+```json
+{
+    "total_projects": 5,
+    "total_tasks": 25,
+    "completed_tasks": 18,
+    "total_materials": 42,
+    "acquired_materials": 35,
+    "recent_projects": [
+        {
+            "id": 1,
+            "name": "Summer Dress",
+            "series": "Summer Collection",
+            "version": "1.0",
+            "created_at": "2025-07-04T20:00:00.000000Z"
+        }
+    ]
+}
+```
+
+---
+
 ## User Profile Endpoints
 
 ### Get User Profile
