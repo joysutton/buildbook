@@ -15,14 +15,14 @@ A comprehensive sewing project management application designed for competition e
 
 ## Tech Stack
 
-- **Backend**: Laravel 11 (PHP) with API-first architecture
+- **Backend**: Laravel 12 (PHP) with API-first architecture
 - **Frontend**: TALL Stack (Tailwind CSS, Alpine.js, Laravel, Livewire)
 - **Database**: MySQL/PostgreSQL
 - **Authentication**: Laravel Sanctum
-- **Testing**: Pest PHP with 100% test coverage
+- **Testing**: Pest PHP
 - **Media**: Spatie Media Library
 - **PDF Generation**: Spatie Browsershot
-- **Development**: Built with Herd on Windows
+
 
 ## Quick Start
 
