@@ -15,6 +15,7 @@ class NoteFactory extends Factory
             'content' => $this->faker->sentence(),
             'noteable_id' => null,
             'noteable_type' => null,
+            'user_id' => \App\Models\User::factory(),
         ];
     }
 } 

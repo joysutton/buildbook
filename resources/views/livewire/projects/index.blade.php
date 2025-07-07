@@ -98,37 +98,9 @@ new class extends Component {
         </div>
 
         @if($projects->count() > 0)
-            <div class="flex flex-wrap -mx-3">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($projects as $project)
-                    <div class="w-full md:w-1/2 lg:w-1/3 px-3 mb-6">
-                        <a href="{{ route('projects.show', $project) }}" class="block group">
-                            <div class="relative overflow-hidden rounded-lg bg-gray-800 border border-gray-700 hover:border-gray-600 transition-all duration-200 h-[320px]">
-                                <!-- Background image with fade effect -->
-                                @if($project->getFirstMediaUrl('main'))
-                                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 group-hover:opacity-30 transition-opacity duration-200"
-                                         style="background-image: url('{{ $project->getFirstMediaUrl('main') }}')">
-                                    </div>
-                                @endif
-                                
-                                <!-- Content overlay -->
-                                <div class="relative h-full flex flex-col justify-between p-4">
-                                    <!-- Top section - empty for spacing -->
-                                    <div class="flex-1"></div>
-                                    
-                                    <!-- Bottom section with project info -->
-                                    <div class="mt-auto">
-                                        <h3 class="text-lg font-semibold text-gray-100 mb-1 group-hover:text-blue-400 transition-colors">{{ $project->name }}</h3>
-                                        @if($project->series)
-                                            <p class="text-sm text-gray-400 mb-1">Series: {{ $project->series }}</p>
-                                        @endif
-                                        @if($project->version)
-                                            <p class="text-sm text-gray-400">Version: {{ $project->version }}</p>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
+                    <x-project-card :project="$project" />
                 @endforeach
             </div>
 

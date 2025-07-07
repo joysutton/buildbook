@@ -236,7 +236,9 @@
 
     <!-- Materials Page -->
     @php
-        $sharedMaterials = $project->materials->where('share', true);
+        $sharedMaterials = $project->materials->filter(function($material) {
+            return $material->share;
+        });
     @endphp
     @if($sharedMaterials->count() > 0)
         <div class="page page-break">
@@ -260,7 +262,9 @@
 
     <!-- Tasks Page -->
     @php
-        $sharedTasks = $project->tasks->where('share', true);
+        $sharedTasks = $project->tasks->filter(function($task) {
+            return $task->share;
+        });
     @endphp
     @if($sharedTasks->count() > 0)
         <div class="page page-break">

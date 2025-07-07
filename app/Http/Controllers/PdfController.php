@@ -25,6 +25,15 @@ class PdfController extends Controller
         }
 
         try {
+            // Load project with necessary relationships for PDF generation
+            $project->load([
+                'user',
+                'tasks.media',
+                'materials',
+                'notes',
+                'media'
+            ]);
+            
             // Generate PDF from dedicated template
             $html = view('projects.pdf', compact('project'))->render();
             

@@ -23,6 +23,17 @@ class UpdateNoteRequest extends FormRequest
     {
         return [
             'content' => 'required|string|max:10000',
+            'user_id' => 'required|exists:users,id',
         ];
+    }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'user_id' => auth()->id(),
+        ]);
     }
 } 
